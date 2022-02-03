@@ -1,6 +1,0 @@
-[submodule "Python-Debugging-Modules"]
-	path = Python-Debugging-Modules
-	url = https://github.com/Skylite73/Python-Debugging-Modules
-[submodule "My_Project_Euler"]
-	path = My_Project_Euler
-	url = https://github.com/Skylite73/My_Project_Euler
