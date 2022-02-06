@@ -50,7 +50,8 @@ class Debugger():
             self.streams[stream] = DebugStream(var_names, row1)
 
     def table(self, stream: str = 'Stream 1', max_size: int = 12,
-              min_size: int = 6, quiet: bool = False) -> list:
+              min_size: int = 6, precision: int = 5,
+              quiet: bool = False) -> list:
         """Tabulates debug data."""
         # lens = [max(len(str(locals[var])), debug.lens[i], 6)
         #             for i, var in enumerate(vars)]
@@ -60,21 +61,21 @@ class Debugger():
             rows = mystream.rows
             lens = [max(i) for i in zip(*mystream.lens)]
             col_sizes = [max(min_size, min(i, max_size)) for i in lens]
-            data = []
-            for i, size in enumerate(col_sizes):
-                print(size)
-                example = rows[0][i]
-                try:
-                    _ = float(example)
-                    data.append("{:>%i}" % (size))
-                except ValueError:
-                    data.append("{:<%i}" % (size))
-            formatting = '\t'.join(data)
             sep = ["-"*i for i in col_sizes]
-            table = [formatting.format(*i) for i in [header, sep, *rows]]
+            table: list[list[str]] = []
+            for row_items in [header, sep, *rows]:
+                row: list[str] = []
+                for i, item in enumerate(row_items):
+                    size = col_sizes[i]
+                    try:
+                        row.append(("{:> %i.%if}" % (
+                                            size-1, precision)).format(item))
+                    except ValueError:
+                        row.append(("{:<%i}" % (size-1)).format(item))
+                table.append(row)
             if not quiet:
                 print(f"---DEBUGGER--- \tTABLE {stream} BEGIN")
-                [print(i) for i in table]
+                [print(' \t'.join(row)) for row in table]
                 print(f"---DEBUGGER--- \tTABLE {stream} END")
             return table
         except KeyError:
