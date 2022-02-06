@@ -24,17 +24,18 @@ def main():
         b = 'b'*i
         d.debug(locals(), "a,b", "table1")
     for i in range(10):
-        a = 10 ** i
-        b = 'b'*i
+        a = 10000 * 10 ** i
+        b = 'fish'*i
         c = i/9
-        e = 1/a
-        d.debug(locals(), "e,c,b,a", "table2")
+        e = 1/(10 ** i)
+        f = [i for i in range(i)]
+        d.debug(locals(), "f,e,c,b,a", "table2")
     for i in range(10):
         c = i/9
         e = 1/(10 ** i)
         d.debug(locals(), "c,e", "table1")
     d.table("table1")
-    d.table("table2")
+    d.table("table2", max_size=20, min_size=15)
 
 
 if __name__ == '__main__':

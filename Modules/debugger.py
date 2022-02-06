@@ -7,13 +7,13 @@ class DebugStream():
         """Init."""
         self.header: list[str] = header
         self.rows: list[list[str]] = [row1]
-        self.lens: list[list[int]] = [[len(title) for title in header],
-                                      [len(item) for item in row1]]
+        self.lens: list[list[int]] = [[len(str(title)) for title in header],
+                                      [len(str(item)) for item in row1]]
 
     def add_row(self, row: list[str]) -> None:
         """Gathers debug data to be passed onto debug_table."""
         self.rows.append(row)
-        self.lens.append([len(var) for var in row])
+        self.lens.append([len(str(var)) for var in row])
 
     def merge_data(self, var_names, row) -> None:
         """Merge incompatible debug calls on the same stream."""
@@ -40,17 +40,17 @@ class Debugger():
             mystream = self.streams[stream]
             if all([var in mystream.header for var in var_names]):
                 # All variables already accounted for in header
-                mystream.add_row([str(locals[var]) for var in vars])
+                mystream.add_row([locals[var] for var in vars])
             else:
                 # Merge data streams
                 mystream.merge_data(var_names, vars)
         except KeyError:
             # New data stream
-            row1 = [str(locals[var]) for var in vars]
+            row1 = [locals[var] for var in vars]
             self.streams[stream] = DebugStream(var_names, row1)
 
-    def table(self, stream: str = 'Stream 1', max_size: int = 12,
-              min_size: int = 6, precision: int = 5,
+    def table(self, stream: str = 'Stream 1', max_size: int = 15,
+              min_size: int = 8, precision: int = -1,
               quiet: bool = False) -> list:
         """Tabulates debug data."""
         # lens = [max(len(str(locals[var])), debug.lens[i], 6)
@@ -63,15 +63,29 @@ class Debugger():
             col_sizes = [max(min_size, min(i, max_size)) for i in lens]
             sep = ["-"*i for i in col_sizes]
             table: list[list[str]] = []
-            for row_items in [header, sep, *rows]:
+            warning = False
+            for i, row_items in enumerate([header, sep, *rows]):
                 row: list[str] = []
-                for i, item in enumerate(row_items):
-                    size = col_sizes[i]
-                    try:
-                        row.append(("{:> %i.%if}" % (
-                                            size-1, precision)).format(item))
-                    except ValueError:
-                        row.append(("{:<%i}" % (size-1)).format(item))
+                for j, item in enumerate(row_items):
+
+                    size = col_sizes[j]
+                    if i == 0:
+                        row.append(("{:^%i}" % (size)).format(item))
+                    else:
+                        try:
+                            _ = int(item)
+                            formatter = "{:> %i.%ig}"
+                            prec = size-3 if precision == -1 else precision
+                        except (ValueError, TypeError):
+                            item = str(item)
+                            if len(item) > size and not warning:
+                                print("---DEBUGGER--- \tWARNING! \t" +
+                                      f"Item truncated for '{stream}'")
+                                warning = True
+                            formatter = "{:<%i.%i}"
+                            prec = size if precision == -1 else precision
+                        finally:
+                            row.append((formatter % (size, prec)).format(item))
                 table.append(row)
             if not quiet:
                 print(f"---DEBUGGER--- \tTABLE {stream} BEGIN")
