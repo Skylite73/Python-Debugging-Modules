@@ -5,6 +5,6 @@ Just a couple things.
 4. Critique and recommendations are encouraged! Let me hear what I can do better. It's the only way I'll improve.
 
 What things do:
-Timer -- Basically just the normal timeit module with some printing for convenience.
-Debugger -- Collects variable data at set places then forms a table of data.
-Plotter -- Not really done yet. Will be a simplistic matplotlib plotter.
+- Timer -- Basically just the normal timeit module with some printing for convenience.
+- Debugger -- Collects variable data at set places then forms a table of data.
+- Plotter -- Not really done yet. Will be a simplistic matplotlib plotter.
