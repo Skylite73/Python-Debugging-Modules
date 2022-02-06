@@ -34,6 +34,7 @@ def main():
         e = 1/(10 ** i)
         d.debug(locals(), "c,e", "table1")
     d.table("table1")
+    d.table("table2")
 
 
 if __name__ == '__main__':

@@ -49,7 +49,7 @@ class Debugger():
             row1 = [str(locals[var]) for var in vars]
             self.streams[stream] = DebugStream(var_names, row1)
 
-    def table(self, stream: str = 'Stream 1', max_size: int = 10,
+    def table(self, stream: str = 'Stream 1', max_size: int = 12,
               min_size: int = 6, quiet: bool = False) -> list:
         """Tabulates debug data."""
         # lens = [max(len(str(locals[var])), debug.lens[i], 6)
@@ -59,7 +59,7 @@ class Debugger():
             header = mystream.header
             rows = mystream.rows
             lens = [max(i) for i in zip(*mystream.lens)]
-            col_sizes = [min(i, 10) for i in lens]
+            col_sizes = [max(min_size, min(i, max_size)) for i in lens]
             data = []
             for i, size in enumerate(col_sizes):
                 print(size)
